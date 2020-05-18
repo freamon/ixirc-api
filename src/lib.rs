@@ -1,4 +1,4 @@
-#![allow(dead_code)]
+//#![allow(dead_code)]
 
 use serde::Deserialize;
 use zeptohttpc::{http::Request, RequestBuilderExt, RequestExt, ResponseExt};
@@ -38,7 +38,7 @@ pub struct ApiResponse {
 type GenError = Box<dyn std::error::Error>;
 type GenResult<T> = Result<T, GenError>;
 
-fn query(search_term: String) -> GenResult<Vec<ApiResponse>> {
+pub fn query(search_term: String) -> GenResult<Vec<ApiResponse>> {
     let mut pn = 0;
     let mut response = Vec::new();
 
