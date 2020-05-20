@@ -1,6 +1,6 @@
-Returns results from ixirc as a vector of ApiResponse structs:
+Returns results from ixirc as a vector of Response structs:
 ```
-pub struct ApiResponse {
+pub struct Response {
     pub pack_name: String,
     pub network_name: String,
     pub channel_id: u64,
@@ -15,10 +15,10 @@ pub struct ApiResponse {
 
 Example Usage
 ```
-use ixirc_api::connect::query;
+use ixirc_api::Response;
 
 fn main() {
-    if let Some(response) = query("sherlock+holmes".to_string()).ok() {
+    if let Some(response) = Response::query("sherlock+holmes".to_string()).ok() {
         for r in response {
             println!("{}", r.pack_name);
         }
