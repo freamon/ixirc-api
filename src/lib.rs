@@ -38,6 +38,14 @@ type GenResult<T> = Result<T, GenError>;
 
 impl Response {
     pub fn query(search_term: String) -> GenResult<Vec<Response>> {
+        
+        let iter = search_term.split_ascii_whitespace();
+        let search_term: String = iter.clone().map(|x|format!("{}+", x)).collect();
+        let mut words = Vec::new();
+        for i in iter {
+            words.push(i);
+        }
+        
         let mut pn = 0;
         let mut res = Vec::new();
 
@@ -46,20 +54,27 @@ impl Response {
             let raw = Request::get(&url).empty()?.send()?;
             let deserialized: Base = raw.json()?;
 
-            for d in deserialized.results {
-                if d.uname.is_some() {
-                    let r = Response {
-                        pack_name: d.name,
-                        network_name: d.naddr,
-                        channel_id: d.cid,
-                        channel_name: d.cname,
-                        username: d.uname.unwrap(),
-                        pack_number: d.n,
-                        gets: d.gets,
-                        file_size: d.szf,
-                    };
-                    res.push(r);
+            'check: for d in deserialized.results {
+                if d.uname.is_none() {
+                    continue 'check;
                 }
+                for i in &words {
+                    if d.name.to_lowercase().contains(&i.to_lowercase()) == false {
+                        continue 'check;
+                    }
+                }
+                
+                let r = Response {
+                    pack_name: d.name,
+                    network_name: d.naddr,
+                    channel_id: d.cid,
+                    channel_name: d.cname,
+                    username: d.uname.unwrap(),
+                    pack_number: d.n,
+                    gets: d.gets,
+                    file_size: d.szf,
+                };
+                res.push(r);
             }
 
             pn += 1;
